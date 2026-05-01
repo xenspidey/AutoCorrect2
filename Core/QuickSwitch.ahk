@@ -279,8 +279,11 @@ ShowMenu(hk := "") {
         }
     }
 
-    if !showMenu
+    if !showMenu {
+        ToolTip("QuickSwitch: No open file manager folders found.`nOpen File Explorer to a folder, then try again.")
+        SetTimer(() => ToolTip(), -2500)
         return
+    }
 
     contextMenu.Add()
     contextMenu.Add("Settings for this dialog", (n*) => 0)
