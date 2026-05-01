@@ -182,7 +182,7 @@ ShowMenu(hk := "") {
     global cm_CopySrcPathToClip, cm_CopyTrgPathToClip
 
     contextMenu := Menu()
-    contextMenu.Add("QuickSwitch Menu", (*) => 0)
+    contextMenu.Add("QuickSwitch Menu", (n*) => 0)
     contextMenu.Default := "QuickSwitch Menu"
     contextMenu.Disable("QuickSwitch Menu")
 
@@ -244,7 +244,10 @@ ShowMenu(hk := "") {
             if !OpusInfo {
                 try Run('"' dopusExe '\..\dopusrt.exe" /info "' _tempfile '"')
                 Sleep(100)
-                try { OpusInfo := FileRead(_tempfile), FileDelete(_tempfile) }
+                try {
+                    OpusInfo := FileRead(_tempfile)
+                    FileDelete(_tempfile)
+                }
             }
 
             for tabState in [1, 2] {
@@ -279,7 +282,7 @@ ShowMenu(hk := "") {
         return
 
     contextMenu.Add()
-    contextMenu.Add("Settings for this dialog", (*) => 0)
+    contextMenu.Add("Settings for this dialog", (n*) => 0)
     contextMenu.Disable("Settings for this dialog")
     contextMenu.Add("Allow AutoSwitch", AutoSwitchCB)
     contextMenu.Add("Never here",       NeverCB)
