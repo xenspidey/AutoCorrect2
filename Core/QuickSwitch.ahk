@@ -194,7 +194,7 @@ ShowMenu(hk := "") {
 
         ; ── Total Commander ──────────────────────────────────
         if thisClass = "TTOTAL_CMD" {
-            tcExe     := GetModuleFileNameEx(WinGetPID("ahk_id " winID))
+            tcExe     := WinGetProcessPath("ahk_id " winID)
             clipSaved := ClipboardAll()
 
             A_Clipboard := ""
@@ -220,7 +220,7 @@ ShowMenu(hk := "") {
 
         ; ── XYPlorer ─────────────────────────────────────────
         if thisClass = "ThunderRT6FormDC" {
-            xyExe     := GetModuleFileNameEx(WinGetPID("ahk_id " winID))
+            xyExe     := WinGetProcessPath("ahk_id " winID)
             clipSaved := ClipboardAll()
 
             for xyCmd in ["::copytext get('path', a);", "::copytext get('path', i);"] {
@@ -239,7 +239,7 @@ ShowMenu(hk := "") {
 
         ; ── Directory Opus ───────────────────────────────────
         if thisClass = "dopus.lister" {
-            dopusExe := GetModuleFileNameEx(WinGetPID("ahk_id " winID))
+            dopusExe := WinGetProcessPath("ahk_id " winID)
 
             if !OpusInfo {
                 try Run('"' dopusExe '\..\dopusrt.exe" /info "' _tempfile '"')
@@ -489,7 +489,7 @@ Get_Zfolder(_thisID) {
     }
 
     else if nextClass = "dopus.lister" {
-        dopusExe := GetModuleFileNameEx(WinGetPID("ahk_id " nextID))
+        dopusExe := WinGetProcessPath("ahk_id " nextID)
         try Run('"' dopusExe '\..\dopusrt.exe" /info "' _tempfile '"')
         Sleep(100)
         try {
@@ -512,16 +512,6 @@ ValidFolder(_thisPath) {
 
 
 ; ── DLL helpers ───────────────────────────────────────────────────────────────
-
-GetModuleFileNameEx(p_pid) {
-    hProcess := DllCall("OpenProcess", "UInt", 0x0410, "Int", false, "UInt", p_pid, "Ptr")
-    if !hProcess
-        return ""
-    nameBuf := Buffer(520, 0)
-    DllCall("psapi.dll\GetModuleFileNameExW", "Ptr", hProcess, "Ptr", 0, "Ptr", nameBuf, "UInt", 260)
-    DllCall("CloseHandle", "Ptr", hProcess)
-    return StrGet(nameBuf, "UTF-16")
-}
 
 Send_XYPlorer_Message(xyHwnd, message) {
     size    := StrLen(message)
