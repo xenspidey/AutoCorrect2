@@ -202,7 +202,7 @@ ShowMenu(hk := "") {
             if ValidFolder(A_Clipboard) {
                 f := A_Clipboard
                 contextMenu.Add(f, FolderChoiceCB)
-                contextMenu.SetIcon(f, tcExe, 0)
+                contextMenu.SetIcon(f, tcExe, 1)
                 showMenu := true
             }
 
@@ -211,7 +211,7 @@ ShowMenu(hk := "") {
             if ValidFolder(A_Clipboard) {
                 f := A_Clipboard
                 contextMenu.Add(f, FolderChoiceCB)
-                contextMenu.SetIcon(f, tcExe, 0)
+                contextMenu.SetIcon(f, tcExe, 1)
                 showMenu := true
             }
 
@@ -229,7 +229,7 @@ ShowMenu(hk := "") {
                 if ValidFolder(A_Clipboard) {
                     f := A_Clipboard
                     contextMenu.Add(f, FolderChoiceCB)
-                    contextMenu.SetIcon(f, xyExe, 0)
+                    contextMenu.SetIcon(f, xyExe, 1)
                     showMenu := true
                 }
             }
@@ -257,7 +257,7 @@ ShowMenu(hk := "") {
                 if RegExMatch(OpusInfo, pattern, &out) {
                     if ValidFolder(out[1]) {
                         contextMenu.Add(out[1], FolderChoiceCB)
-                        contextMenu.SetIcon(out[1], dopusExe, 0)
+                        contextMenu.SetIcon(out[1], dopusExe, 1)
                         showMenu := true
                     }
                 }
@@ -368,7 +368,7 @@ AutoSwitchExceptionCB(ItemName, ItemPos, MyMenu) {
             selected := "Select"
             level1 := idx
         }
-        if (!level2 && (thisClass = "TTOTAL_CMD" || thisClass = "CabinetWClass" || thisClass = "ThunderRT6FormDC")) {
+        if (!level2 && (thisClass = "TTOTAL_CMD" || thisClass = "CabinetWClass" || thisClass = "ThunderRT6FormDC" || thisClass = "dopus.lister")) {
             selected := "Select"
             level2 := idx
         }
@@ -412,9 +412,9 @@ DebugCB(ItemName, ItemPos, MyMenu) {
     lv.ModifyCol()
 
     btnExport := debugGui.Add("Button", "y+10 w100 h30", "Export")
-    btnExport.OnEvent("Click", (*) => ExportDebugData(lv, gFingerPrint))
+    btnExport.OnEvent("Click", (n*) => ExportDebugData(lv, gFingerPrint))
     btnCancel := debugGui.Add("Button", "x+10 w100 h30", "Cancel")
-    btnCancel.OnEvent("Click", (*) => debugGui.Destroy())
+    btnCancel.OnEvent("Click", (n*) => debugGui.Destroy())
     debugGui.Show()
 }
 
