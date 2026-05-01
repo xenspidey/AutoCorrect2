@@ -15,8 +15,7 @@ Hotkey: Ctrl+Q (when a file dialog is active)
 global cm_CopySrcPathToClip := 2029
 global cm_CopyTrgPathToClip := 2030
 
-SplitPath(A_ScriptFullPath, , , , &scriptBaseName)
-global $INI     := scriptBaseName . ".ini"
+global $INI     := A_ScriptDir "\" SubStr(A_ScriptName, 1, InStr(A_ScriptName, ".", , -1) - 1) . ".ini"
 global _tempfile := EnvGet("TEMP") . "\dopusinfo.xml"
 try FileDelete(_tempfile)
 
