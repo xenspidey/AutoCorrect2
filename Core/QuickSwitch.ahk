@@ -244,31 +244,16 @@ ShowMenu(hk := "") {
             dopusRt := dopusDir . Chr(92) . "dopusrt.exe"
 
             if !OpusInfo {
-                dbg := "dopusRt=" dopusRt "`ntempfile=" _tempfile "`nwinID=" winID "`n"
-                dbg .= "dopusRt exists=" FileExist(dopusRt) "`n"
-
-                exitCode := 0
-                try exitCode := RunWait('"' dopusRt '" /info "' _tempfile '",paths')
-                catch as e
-                    dbg .= "RunWait error: " e.Message "`n"
-
-                dbg .= "RunWait exit=" exitCode "`n"
-                dbg .= "File exists after run=" FileExist(_tempfile) "`n"
-
+                try RunWait('"' dopusRt '" /info "' _tempfile '",paths')
                 try {
                     OpusInfo := FileRead(_tempfile)
                     FileDelete(_tempfile)
                 }
-                dbg .= "OpusInfo length=" StrLen(OpusInfo) "`n"
-                dbg .= "First 800 chars:`n" SubStr(OpusInfo, 1, 800)
-
-                try FileDelete(A_ScriptDir . Chr(92) . "dopus_debug.txt")
-                FileAppend(dbg, A_ScriptDir . Chr(92) . "dopus_debug.txt")
-                MsgBox(dbg, "DOpus Debug", 0)
             }
 
+            winIDHex := Format("0x{:x}", winID)
             for tabState in [1, 2] {
-                pattern := 'm)^.*lister="' . winID . '".*tab_state="' . tabState . '".*>(.*)<\/path>$'
+                pattern := 'm)^.*lister="' . winIDHex . '".*tab_state="' . tabState . '".*>(.*)<\/path>$'
                 if RegExMatch(OpusInfo, pattern, &out) {
                     if ValidFolder(out[1]) {
                         contextMenu.Add(out[1], FolderChoiceCB)
@@ -509,12 +494,12 @@ Get_Zfolder(_thisID) {
         dopusExe := WinGetProcessPath("ahk_id " nextID)
         SplitPath(dopusExe, , &dopusDir2)
         dopusRt2 := dopusDir2 . Chr(92) . "dopusrt.exe"
-        try Run('"' dopusRt2 '" /info "' _tempfile '",paths')
-        Sleep(500)
+        try RunWait('"' dopusRt2 '" /info "' _tempfile '",paths')
         try {
             OpusInfo := FileRead(_tempfile)
             FileDelete(_tempfile)
-            pattern := 'm)^.*lister="' . nextID . '".*tab_state="1".*>(.*)<\/path>$'
+            nextIDHex := Format("0x{:x}", nextID)
+            pattern := 'm)^.*lister="' . nextIDHex . '".*tab_state="1".*>(.*)<\/path>$'
             if RegExMatch(OpusInfo, pattern, &out)
                 ZFolder := out[1]
         }
