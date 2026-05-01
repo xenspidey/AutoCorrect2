@@ -244,14 +244,12 @@ ShowMenu(hk := "") {
             dopusRt := dopusDir . Chr(92) . "dopusrt.exe"
 
             if !OpusInfo {
-                try Run('"' dopusRt '" /info "' _tempfile '"')
-                Sleep(200)
+                try Run('"' dopusRt '" /info "' _tempfile '",paths')
+                Sleep(500)
                 try {
                     OpusInfo := FileRead(_tempfile)
                     FileDelete(_tempfile)
                 }
-                ; DEBUG: show raw XML so we can verify format and winID matching
-                MsgBox("DOpus exe: " dopusExe "`ndopusrt: " dopusRt "`nwinID: " winID "`n`nXML (first 500 chars):`n" SubStr(OpusInfo, 1, 500))
             }
 
             for tabState in [1, 2] {
@@ -494,8 +492,10 @@ Get_Zfolder(_thisID) {
 
     else if nextClass = "dopus.lister" {
         dopusExe := WinGetProcessPath("ahk_id " nextID)
-        try Run('"' dopusExe '\..\dopusrt.exe" /info "' _tempfile '"')
-        Sleep(100)
+        SplitPath(dopusExe, , &dopusDir2)
+        dopusRt2 := dopusDir2 . Chr(92) . "dopusrt.exe"
+        try Run('"' dopusRt2 '" /info "' _tempfile '",paths')
+        Sleep(500)
         try {
             OpusInfo := FileRead(_tempfile)
             FileDelete(_tempfile)
