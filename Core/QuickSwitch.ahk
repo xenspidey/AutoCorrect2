@@ -15,7 +15,7 @@ Hotkey: Ctrl+Q (when a file dialog is active)
 global cm_CopySrcPathToClip := 2029
 global cm_CopyTrgPathToClip := 2030
 
-global $INI     := A_ScriptDir "\" SubStr(A_ScriptName, 1, InStr(A_ScriptName, ".", , -1) - 1) . ".ini"
+global $INI     := StrReplace(A_ScriptFullPath, ".ahk", ".ini")
 global _tempfile := EnvGet("TEMP") . "\dopusinfo.xml"
 try FileDelete(_tempfile)
 
@@ -143,7 +143,7 @@ FeedDialogSYSLISTVIEW(_thisID, _thisFOLDER) {
     oldText := ControlGetText("Edit1", "ahk_id " _thisID)
     Sleep(20)
 
-    _thisFOLDER := RTrim(_thisFOLDER, "\") "\"
+    _thisFOLDER := RTrim(_thisFOLDER, Chr(92)) . Chr(92)
 
     folderSet := false
     loop 20 {
@@ -410,7 +410,7 @@ DebugCB(ItemName, ItemPos, MyMenu) {
 }
 
 ExportDebugData(lv, fingerPrint) {
-    fileName := A_ScriptDir "\" fingerPrint ".csv"
+    fileName := A_ScriptDir . Chr(92) . fingerPrint . ".csv"
     try {
         f := FileOpen(fileName, "w")
         f.WriteLine("Control;ID;Parent;Text;X;Y;W;H")
