@@ -244,12 +244,27 @@ ShowMenu(hk := "") {
             dopusRt := dopusDir . Chr(92) . "dopusrt.exe"
 
             if !OpusInfo {
-                try Run('"' dopusRt '" /info "' _tempfile '",paths')
-                Sleep(500)
+                dbg := "dopusRt=" dopusRt "`ntempfile=" _tempfile "`nwinID=" winID "`n"
+                dbg .= "dopusRt exists=" FileExist(dopusRt) "`n"
+
+                exitCode := 0
+                try exitCode := RunWait('"' dopusRt '" /info "' _tempfile '",paths')
+                catch as e
+                    dbg .= "RunWait error: " e.Message "`n"
+
+                dbg .= "RunWait exit=" exitCode "`n"
+                dbg .= "File exists after run=" FileExist(_tempfile) "`n"
+
                 try {
                     OpusInfo := FileRead(_tempfile)
                     FileDelete(_tempfile)
                 }
+                dbg .= "OpusInfo length=" StrLen(OpusInfo) "`n"
+                dbg .= "First 800 chars:`n" SubStr(OpusInfo, 1, 800)
+
+                FileDelete(A_ScriptDir . Chr(92) . "dopus_debug.txt")
+                FileAppend(dbg, A_ScriptDir . Chr(92) . "dopus_debug.txt")
+                MsgBox(dbg, "DOpus Debug", 0)
             }
 
             for tabState in [1, 2] {
