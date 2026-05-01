@@ -262,7 +262,7 @@ ShowMenu(hk := "") {
                 dbg .= "OpusInfo length=" StrLen(OpusInfo) "`n"
                 dbg .= "First 800 chars:`n" SubStr(OpusInfo, 1, 800)
 
-                FileDelete(A_ScriptDir . Chr(92) . "dopus_debug.txt")
+                try FileDelete(A_ScriptDir . Chr(92) . "dopus_debug.txt")
                 FileAppend(dbg, A_ScriptDir . Chr(92) . "dopus_debug.txt")
                 MsgBox(dbg, "DOpus Debug", 0)
             }
