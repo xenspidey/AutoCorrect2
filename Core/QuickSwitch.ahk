@@ -15,34 +15,34 @@ Hotkey: Ctrl+Q (when a file dialog is active)
 global cm_CopySrcPathToClip := 2029
 global cm_CopyTrgPathToClip := 2030
 
-global $INI     := StrReplace(A_ScriptFullPath, ".ahk", ".ini")
+global gINI     := StrReplace(A_ScriptFullPath, ".ahk", ".ini")
 global _tempfile := EnvGet("TEMP") . "\dopusinfo.xml"
 try FileDelete(_tempfile)
 
-global $WinID       := 0
-global $DialogType  := ""
-global $DialogAction := ""
-global $FingerPrint := ""
+global gWinID       := 0
+global gDialogType  := ""
+global gDialogAction := ""
+global gFingerPrint := ""
 
 Hotkey("^Q", ShowMenu, "Off")
 
 loop {
     WinWaitActive("ahk_class #32770")
 
-    $WinID      := WinExist("A")
-    $DialogType := SmellsLikeAFileDialog($WinID)
+    gWinID      := WinExist("A")
+    gDialogType := SmellsLikeAFileDialog(gWinID)
 
-    if $DialogType {
-        ahkExe       := WinGetProcessName("ahk_id " $WinID)
-        windowTitle  := WinGetTitle("ahk_id " $WinID)
-        $FingerPrint := ahkExe "___" windowTitle
-        $DialogAction := IniRead($INI, "Dialogs", $FingerPrint, "")
+    if gDialogType {
+        ahkExe       := WinGetProcessName("ahk_id " gWinID)
+        windowTitle  := WinGetTitle("ahk_id " gWinID)
+        gFingerPrint := ahkExe "___" windowTitle
+        gDialogAction := IniRead(gINI, "Dialogs", gFingerPrint, "")
 
-        if ($DialogAction = "1") {
-            folderPath := Get_Zfolder($WinID)
+        if (gDialogAction = "1") {
+            folderPath := Get_Zfolder(gWinID)
             if ValidFolder(folderPath)
-                FeedDialog($WinID, folderPath, $DialogType)
-        } else if ($DialogAction = "0") {
+                FeedDialog(gWinID, folderPath, gDialogType)
+        } else if (gDialogAction = "0") {
             ; "Never here" — do nothing
         } else {
             ShowMenu()
@@ -51,10 +51,10 @@ loop {
         Hotkey("^Q", ShowMenu, "On")
     }
 
-    WinWaitNotActive("ahk_id " $WinID)
+    WinWaitNotActive("ahk_id " gWinID)
     Hotkey("^Q", ShowMenu, "Off")
 
-    $WinID := 0, $DialogType := "", $DialogAction := "", $FingerPrint := ""
+    gWinID := 0, gDialogType := "", gDialogAction := "", gFingerPrint := ""
 }
 
 
@@ -178,7 +178,7 @@ FeedDialogSYSLISTVIEW(_thisID, _thisFOLDER) {
 ; ── Context menu ──────────────────────────────────────────────────────────────
 
 ShowMenu(*) {
-    global $DialogType, $DialogAction, $WinID, $FingerPrint, $INI, _tempfile
+    global gDialogType, gDialogAction, gWinID, gFingerPrint, gINI, _tempfile
     global cm_CopySrcPathToClip, cm_CopyTrgPathToClip
 
     contextMenu := Menu()
@@ -285,10 +285,10 @@ ShowMenu(*) {
     contextMenu.Add("Never here",       NeverCB)
     contextMenu.Add("Not now",          NotNowCB)
 
-    if ($DialogAction = "1") {
+    if (gDialogAction = "1") {
         contextMenu.Check("Allow AutoSwitch")
         contextMenu.Add("AutoSwitch exception", AutoSwitchExceptionCB)
-    } else if ($DialogAction = "0") {
+    } else if (gDialogAction = "0") {
         contextMenu.Check("Never here")
     } else {
         contextMenu.Check("Not now")
@@ -302,34 +302,34 @@ ShowMenu(*) {
 ; ── Menu callbacks ────────────────────────────────────────────────────────────
 
 FolderChoiceCB(ItemName, ItemPos, MyMenu) {
-    global $DialogType, $WinID
+    global gDialogType, gWinID
     if ValidFolder(ItemName)
-        FeedDialog($WinID, ItemName, $DialogType)
+        FeedDialog(gWinID, ItemName, gDialogType)
 }
 
 AutoSwitchCB(ItemName, ItemPos, MyMenu) {
-    global $DialogType, $WinID, $FingerPrint, $INI, $DialogAction
-    IniWrite("1", $INI, "Dialogs", $FingerPrint)
-    $DialogAction := "1"
-    folderPath := Get_Zfolder($WinID)
+    global gDialogType, gWinID, gFingerPrint, gINI, gDialogAction
+    IniWrite("1", gINI, "Dialogs", gFingerPrint)
+    gDialogAction := "1"
+    folderPath := Get_Zfolder(gWinID)
     if ValidFolder(folderPath)
-        FeedDialog($WinID, folderPath, $DialogType)
+        FeedDialog(gWinID, folderPath, gDialogType)
 }
 
 NeverCB(ItemName, ItemPos, MyMenu) {
-    global $FingerPrint, $INI, $DialogAction
-    IniWrite("0", $INI, "Dialogs", $FingerPrint)
-    $DialogAction := "0"
+    global gFingerPrint, gINI, gDialogAction
+    IniWrite("0", gINI, "Dialogs", gFingerPrint)
+    gDialogAction := "0"
 }
 
 NotNowCB(ItemName, ItemPos, MyMenu) {
-    global $FingerPrint, $INI, $DialogAction
-    IniDelete($INI, "Dialogs", $FingerPrint)
-    $DialogAction := ""
+    global gFingerPrint, gINI, gDialogAction
+    IniDelete(gINI, "Dialogs", gFingerPrint)
+    gDialogAction := ""
 }
 
 AutoSwitchExceptionCB(ItemName, ItemPos, MyMenu) {
-    global $DialogType, $WinID, $FingerPrint, $INI
+    global gDialogType, gWinID, gFingerPrint, gINI
 
     result := MsgBox(
         "For AutoSwitch to work, a file manager is typically '2 windows away':`n" .
@@ -355,7 +355,7 @@ AutoSwitchExceptionCB(ItemName, ItemPos, MyMenu) {
     for idx, wid in allWindows {
         thisClass := WinGetClass("ahk_id " wid)
         selected  := ""
-        if wid = $WinID {
+        if wid = gWinID {
             selected := "Select"
             level1 := idx
         }
@@ -375,19 +375,19 @@ AutoSwitchExceptionCB(ItemName, ItemPos, MyMenu) {
 
     if result2 = "OK" {
         if delta = 2
-            IniDelete($INI, "AutoSwitchException", $FingerPrint)
+            IniDelete(gINI, "AutoSwitchException", gFingerPrint)
         else
-            IniWrite(delta, $INI, "AutoSwitchException", $FingerPrint)
+            IniWrite(delta, gINI, "AutoSwitchException", gFingerPrint)
 
-        folderPath := Get_Zfolder($WinID)
+        folderPath := Get_Zfolder(gWinID)
         if ValidFolder(folderPath)
-            FeedDialog($WinID, folderPath, $DialogType)
+            FeedDialog(gWinID, folderPath, gDialogType)
     }
     debugGui.Destroy()
 }
 
 DebugCB(ItemName, ItemPos, MyMenu) {
-    global $FingerPrint
+    global gFingerPrint
     debugGui := Gui(, "Control Debug")
     lv := debugGui.Add("ListView", "r25 w1024", ["Control", "ID", "Parent", "Text", "X", "Y", "W", "H"])
 
@@ -403,7 +403,7 @@ DebugCB(ItemName, ItemPos, MyMenu) {
     lv.ModifyCol()
 
     btnExport := debugGui.Add("Button", "y+10 w100 h30", "Export")
-    btnExport.OnEvent("Click", (*) => ExportDebugData(lv, $FingerPrint))
+    btnExport.OnEvent("Click", (*) => ExportDebugData(lv, gFingerPrint))
     btnCancel := debugGui.Add("Button", "x+10 w100 h30", "Cancel")
     btnCancel.OnEvent("Click", (*) => debugGui.Destroy())
     debugGui.Show()
@@ -433,9 +433,9 @@ ExportDebugData(lv, fingerPrint) {
 ; ── Core logic ────────────────────────────────────────────────────────────────
 
 Get_Zfolder(_thisID) {
-    global $FingerPrint, $INI, _tempfile, cm_CopySrcPathToClip
+    global gFingerPrint, gINI, _tempfile, cm_CopySrcPathToClip
 
-    zDelta     := Integer(IniRead($INI, "AutoSwitchException", $FingerPrint, "2"))
+    zDelta     := Integer(IniRead(gINI, "AutoSwitchException", gFingerPrint, "2"))
     allWindows := WinGetList()
     thisZ      := 0
 
