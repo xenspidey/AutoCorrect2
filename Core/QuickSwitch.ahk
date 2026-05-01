@@ -251,7 +251,8 @@ ShowMenu(hk := "") {
             }
 
             for tabState in [1, 2] {
-                if RegExMatch(OpusInfo, 'mO)^.*lister="' winID '".*tab_state="' tabState '".*>(.*)<\/path>$', &out) {
+                pattern := 'mO)^.*lister="' . winID . '".*tab_state="' . tabState . '".*>(.*)<\/path>$'
+                if RegExMatch(OpusInfo, pattern, &out) {
                     if ValidFolder(out[1]) {
                         contextMenu.Add(out[1], FolderChoiceCB)
                         contextMenu.SetIcon(out[1], dopusExe, 0)
@@ -491,7 +492,8 @@ Get_Zfolder(_thisID) {
         try {
             OpusInfo := FileRead(_tempfile)
             FileDelete(_tempfile)
-            if RegExMatch(OpusInfo, 'mO)^.*lister="' nextID '".*tab_state="1".*>(.*)<\/path>$', &out)
+            pattern := 'mO)^.*lister="' . nextID . '".*tab_state="1".*>(.*)<\/path>$'
+            if RegExMatch(OpusInfo, pattern, &out)
                 ZFolder := out[1]
         }
     }
