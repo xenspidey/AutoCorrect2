@@ -177,7 +177,7 @@ FeedDialogSYSLISTVIEW(_thisID, _thisFOLDER) {
 
 ; ── Context menu ──────────────────────────────────────────────────────────────
 
-ShowMenu(*) {
+ShowMenu(hk := "") {
     global gDialogType, gDialogAction, gWinID, gFingerPrint, gINI, _tempfile
     global cm_CopySrcPathToClip, cm_CopyTrgPathToClip
 
