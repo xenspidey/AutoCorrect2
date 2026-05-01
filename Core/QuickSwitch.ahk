@@ -240,14 +240,18 @@ ShowMenu(hk := "") {
         ; ── Directory Opus ───────────────────────────────────
         if thisClass = "dopus.lister" {
             dopusExe := WinGetProcessPath("ahk_id " winID)
+            SplitPath(dopusExe, , &dopusDir)
+            dopusRt := dopusDir . Chr(92) . "dopusrt.exe"
 
             if !OpusInfo {
-                try Run('"' dopusExe '\..\dopusrt.exe" /info "' _tempfile '"')
-                Sleep(100)
+                try Run('"' dopusRt '" /info "' _tempfile '"')
+                Sleep(200)
                 try {
                     OpusInfo := FileRead(_tempfile)
                     FileDelete(_tempfile)
                 }
+                ; DEBUG: show raw XML so we can verify format and winID matching
+                MsgBox("DOpus exe: " dopusExe "`ndopusrt: " dopusRt "`nwinID: " winID "`n`nXML (first 500 chars):`n" SubStr(OpusInfo, 1, 500))
             }
 
             for tabState in [1, 2] {
