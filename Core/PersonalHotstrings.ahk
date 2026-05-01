@@ -11,6 +11,7 @@
 ::;quick::The five boxing wizards jump quickly and the quick brown fox jumps over the lazy dog, so pack my box with five dozen liquor jugs.
 
 ; Brian's personal hotstrings
+::_shrug::¯\_(ツ)_/¯
 ::i'm::I'm
 
 ::dt::{
