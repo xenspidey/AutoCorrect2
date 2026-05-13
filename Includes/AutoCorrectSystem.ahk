@@ -609,8 +609,14 @@ fix_consecutive_caps() {
 		loop 26 {
 			char2 := Chr(A_Index + 64)
 			; Create hotstring for every possible combination of two letter capital letters.
-            ;If (char1 char2 != "CO")
-			Hotstring(":*?CXB0:" char1 char2, fix.Bind(char1, char2))
+            ; Add two-letter combos to skip (e.g. "SW" for xSW, "CO" etc.)
+            static capFixExclusions := ["SW"]
+            skip := false
+            for exc in capFixExclusions
+                if (char1 char2 = exc)
+                    skip := true
+            if !skip
+			    Hotstring(":*?CXB0:" char1 char2, fix.Bind(char1, char2))
 		}
 	}
 	HotIf
